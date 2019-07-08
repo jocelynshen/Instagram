@@ -10,6 +10,9 @@ import android.view.View;
 import com.example.instagram.model.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
@@ -28,6 +31,24 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+    }
+
+    private void createPost(String description, ParseFile imageFile, ParseUser user){
+        final Post newPost = new Post();
+        newPost.setDescription(description);
+        newPost.setImage(imageFile);
+        newPost.setUser(user);
+
+        newPost.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null){
+                    Log.d("HomeActivity", "Create post success");
+                } else {
+                    e.printStackTrace();
+                }
             }
         });
     }
