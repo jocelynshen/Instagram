@@ -17,7 +17,7 @@
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     <ImageView
-        android:id="@+id/ivPreview"
+        android:id="@+id/ivPost"
         android:layout_width="235dp"
         android:layout_height="235dp"
         android:layout_marginStart="8dp"
@@ -26,14 +26,14 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/userPosted"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_dialog"
         app:srcCompat="@android:color/black" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/etCaption"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -46,14 +46,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/userPosted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="8dp"
         android:text="Caption"
-        app:layout_constraintBottom_toTopOf="@+id/editText"
+        app:layout_constraintBottom_toTopOf="@+id/etCaption"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -71,7 +71,7 @@
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/sendPost"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginTop="8dp"

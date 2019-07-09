@@ -9,9 +9,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -23,6 +27,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
@@ -31,12 +36,32 @@ public class HomeActivity extends AppCompatActivity {
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
     File photoFile;
+    PostAdapter postAdapter;
+    ArrayList<Post> posts;
+    RecyclerView rvPosts;
+    private SwipeRefreshLayout swipeContainer; // handling swipe refresh
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        posts = new ArrayList<>();
+        postAdapter = new PostAdapter(posts);
+        rvPosts = findViewById(R.id.rvPosts);
+        rvPosts.setLayoutManager(new LinearLayoutManager(this));
+        rvPosts.setAdapter(postAdapter);
         loadTopPosts();
+        swipeContainer = findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchTimelineAsync(0);
+            }
+        });
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_purple,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
     private void createPost(String description, ParseFile imageFile, ParseUser user){
@@ -55,6 +80,9 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+        posts.add(0, newPost);
+        postAdapter.notifyItemInserted(0);
+        rvPosts.scrollToPosition(0);
     }
 
     public void onProfile(View v){
@@ -71,7 +99,8 @@ public class HomeActivity extends AppCompatActivity {
             public void done(List<Post> objects, ParseException e) {
                 if (e == null){
                     for(int i = 0; i<objects.size(); ++i){
-                        Log.d("HomeActivity", "post " + i + " " + objects.get(i).getDescription() + "\n username= " + objects.get(i).getUser().getUsername());
+                        posts.add(objects.get(i));
+                        postAdapter.notifyItemInserted(posts.size() - 1);
                     }
                 } else {
                     e.printStackTrace();
@@ -112,6 +141,8 @@ public class HomeActivity extends AppCompatActivity {
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
                 ImageView dismiss = mView.findViewById(R.id.dismiss);
+                ImageView sendPost = mView.findViewById(R.id.sendPost);
+                final EditText etCaption = mView.findViewById(R.id.etCaption);
                 dismiss.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -119,13 +150,34 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                ImageView ivPreview = mView.findViewById(R.id.ivPreview);
+                ImageView ivPreview = mView.findViewById(R.id.ivPost);
                 ivPreview.setImageBitmap(takenImage);
+                sendPost.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String caption = etCaption.getText().toString();
+                        File photoFile = getPhotoFileUri(photoFileName);
+                        ParseFile parseFile = new ParseFile(photoFile);
+                        ParseUser user = ParseUser.getCurrentUser();
+                        createPost(caption, parseFile, user);
+                        dialog.dismiss();
+
+                    }
+                });
                 dialog.show();
             } else {
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void fetchTimelineAsync(int page) {
+        /*
+        Handles refreshing
+         */
+        postAdapter.clear();
+        loadTopPosts();
+        swipeContainer.setRefreshing(false);
     }
 
 
