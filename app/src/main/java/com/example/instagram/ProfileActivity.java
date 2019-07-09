@@ -38,4 +38,10 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void onHome(View v){
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
+    }
 }

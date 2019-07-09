@@ -1,6 +1,8 @@
 package com.example.instagram;//package com.codepath.apps.restclienttemplate;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.instagram.model.Post;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,10 +50,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-//                Post post = mPosts.get(position);
-//                Intent intent = new Intent(context, HomeActivity.class);
-//                intent.putExtra("post", post);
-//                context.startActivity(intent);
+                Post post = mPosts.get(position);
+                Intent intent = new Intent(context, PostActivity.class);
+                intent.putExtra("post", (Serializable) post);
+                ((Activity) context).startActivityForResult(intent, 20);
             }
         }
     }
@@ -81,7 +84,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         Glide.with(context).load(post.getImage().getUrl()).into(viewHolder.ivPost);
     }
 
-    private static String getRelativeTimeAgo(String rawJsonDate) {
+    public static String getRelativeTimeAgo(String rawJsonDate) {
         /*
         Calculates relative time
          */

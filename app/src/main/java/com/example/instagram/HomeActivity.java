@@ -183,5 +183,7 @@ public class HomeActivity extends AppCompatActivity {
         swipeContainer.setRefreshing(false);
     }
 
-
+    public void onHome(View v){
+        rvPosts.scrollToPosition(posts.size()-1);
+    }
 }

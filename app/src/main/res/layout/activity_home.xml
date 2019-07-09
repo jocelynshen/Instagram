@@ -80,12 +80,13 @@
         android:id="@+id/home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onHome"
         app:layout_constraintBottom_toBottomOf="@+id/bottomNav"
         app:layout_constraintEnd_toStartOf="@+id/search"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/bottomNav"
-        app:srcCompat="@drawable/ic_home" />
+        app:srcCompat="@drawable/ic_home_dark" />
 
     <ImageView
         android:id="@+id/search"
