@@ -81,7 +81,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             dateText = getRelativeTimeAgo(d.toString());
         }
         viewHolder.timePosted.setText(dateText);
-        Glide.with(context).load(post.getImage().getUrl()).into(viewHolder.ivPost);
+        Glide.with(context)
+                .load(post.getImage().getUrl())
+                .into(viewHolder.ivPost);
     }
 
     public static String getRelativeTimeAgo(String rawJsonDate) {

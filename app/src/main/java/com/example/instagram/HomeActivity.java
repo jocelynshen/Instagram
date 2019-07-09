@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.instagram.model.Post;
@@ -40,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
     ArrayList<Post> posts;
     RecyclerView rvPosts;
     private SwipeRefreshLayout swipeContainer; // handling swipe refresh
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +66,17 @@ public class HomeActivity extends AppCompatActivity {
                 android.R.color.holo_purple,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextDataFromApi(page);
+            }
+        };
     }
 
     private void createPost(String description, ParseFile imageFile, ParseUser user){
+        final ProgressBar pb = (ProgressBar) findViewById(R.id.pbLoading);
+        pb.setVisibility(ProgressBar.VISIBLE);
         final Post newPost = new Post();
         newPost.setDescription(description);
         newPost.setImage(imageFile);
@@ -79,6 +89,7 @@ public class HomeActivity extends AppCompatActivity {
                 } else {
                     e.printStackTrace();
                 }
+                pb.setVisibility(ProgressBar.INVISIBLE);
             }
         });
         posts.add(newPost);
@@ -102,7 +113,6 @@ public class HomeActivity extends AppCompatActivity {
                     for(int i = 0; i<objects.size(); ++i){
                         posts.add(objects.get(i));
                         postAdapter.notifyItemInserted(posts.size() - 1);
-
                     }
                     rvPosts.scrollToPosition(posts.size()-1);
                 } else {
@@ -185,5 +195,9 @@ public class HomeActivity extends AppCompatActivity {
 
     public void onHome(View v){
         rvPosts.scrollToPosition(posts.size()-1);
+    }
+
+    public void loadNextDataFromApi(int offset) {
+        loadTopPosts();
     }
 }
