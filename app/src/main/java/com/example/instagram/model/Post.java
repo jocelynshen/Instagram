@@ -6,6 +6,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.Date;
+
 @ParseClassName("Post")
 public class Post extends ParseObject {
     private static final String KEY_DESCRIPTION = "description";
@@ -50,5 +52,10 @@ public class Post extends ParseObject {
             include("user");
             return this;
         }
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return super.getCreatedAt();
     }
 }

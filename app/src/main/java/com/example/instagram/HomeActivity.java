@@ -48,7 +48,9 @@ public class HomeActivity extends AppCompatActivity {
         posts = new ArrayList<>();
         postAdapter = new PostAdapter(posts);
         rvPosts = findViewById(R.id.rvPosts);
-        rvPosts.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        rvPosts.setLayoutManager(layoutManager);
         rvPosts.setAdapter(postAdapter);
         loadTopPosts();
         swipeContainer = findViewById(R.id.swipeContainer);
@@ -69,7 +71,6 @@ public class HomeActivity extends AppCompatActivity {
         newPost.setDescription(description);
         newPost.setImage(imageFile);
         newPost.setUser(user);
-
         newPost.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -80,9 +81,9 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
-        posts.add(0, newPost);
-        postAdapter.notifyItemInserted(0);
-        rvPosts.scrollToPosition(0);
+        posts.add(newPost);
+        postAdapter.notifyItemInserted(posts.size()-1);
+        rvPosts.scrollToPosition(posts.size()-1);
     }
 
     public void onProfile(View v){
@@ -101,7 +102,9 @@ public class HomeActivity extends AppCompatActivity {
                     for(int i = 0; i<objects.size(); ++i){
                         posts.add(objects.get(i));
                         postAdapter.notifyItemInserted(posts.size() - 1);
+
                     }
+                    rvPosts.scrollToPosition(posts.size()-1);
                 } else {
                     e.printStackTrace();
                 }
