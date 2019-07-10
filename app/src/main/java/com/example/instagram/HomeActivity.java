@@ -51,7 +51,6 @@ public class HomeActivity extends AppCompatActivity {
         postAdapter = new PostAdapter(posts);
         rvPosts = findViewById(R.id.rvPosts);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        layoutManager.setReverseLayout(true);
         rvPosts.setLayoutManager(layoutManager);
         rvPosts.setAdapter(postAdapter);
         loadTopPosts();

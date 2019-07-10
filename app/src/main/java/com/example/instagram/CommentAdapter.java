@@ -26,7 +26,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         public ViewHolder(View itemView)  {
             super(itemView);
-            username = itemView.findViewById(R.id.username);
+            username = itemView.findViewById(R.id.tvUsername);
             comment = itemView.findViewById(R.id.tvComment);
             itemView.setOnClickListener(this);
         }

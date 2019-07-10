@@ -78,49 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void changeProfileImage(View v){
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        photoFile = getPhotoFileUri(photoFileName);
-//
-//        Uri fileProvider = FileProvider.getUriForFile(ProfileActivity.this, "com.codepath.fileprovider", photoFile);
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-//
-//        if (intent.resolveActivity(getPackageManager()) != null) {
-//            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-//        }
     }
-//
-//    public File getPhotoFileUri(String fileName) {
-//        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
-//
-//        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-//            Log.d(APP_TAG, "failed to create directory");
-//        }
-//        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-//        return file;
-//    }
-//
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-//            if (resultCode == RESULT_OK) {
-//                File photoFile = getPhotoFileUri(photoFileName);
-//                final ParseFile parseFile = new ParseFile(photoFile);
-//                parseFile.saveInBackground(new SaveCallback() {
-//                    @Override
-//                    public void done(ParseException e) {
-//                        Log.d("[test]", "upload image callback");
-//                        ParseUser currentUser = ParseUser.getCurrentUser();
-//                        currentUser.put("profilePicture", parseFile);
-//                        currentUser.saveInBackground();
-//                        String newProfileUrl = ParseUser.getCurrentUser().getParseFile("profilePicture").getUrl();
-//                        Glide.with(ProfileActivity.this).load(newProfileUrl).apply(RequestOptions.circleCropTransform()).into(profile);
-//                    }
-//                });
-//            } else {
-//                Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
