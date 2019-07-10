@@ -35,13 +35,13 @@
         android:id="@+id/userPosted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
         android:text="Username"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -124,5 +124,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/postCaption" />
+
+    <ImageView
+        android:id="@+id/ivProfileImage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/ivPost"
+        app:layout_constraintStart_toStartOf="@+id/toolbar_dialog2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:color/black" />
 
 </android.support.constraint.ConstraintLayout>

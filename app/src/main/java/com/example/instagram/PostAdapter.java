@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.instagram.model.Post;
 
 import java.io.Serializable;
@@ -33,6 +34,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public ImageView ivPost;
+        public ImageView ivProfileImage;
         public TextView caption;
         public TextView username;
         public TextView timePosted;
@@ -43,6 +45,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             caption = itemView.findViewById(R.id.postCaption);
             username = itemView.findViewById(R.id.userPosted);
             timePosted = itemView.findViewById(R.id.timePosted);
+            ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
             itemView.setOnClickListener(this);
         }
 
@@ -83,7 +86,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         viewHolder.timePosted.setText(dateText);
         Glide.with(context)
                 .load(post.getImage().getUrl())
+                //.apply(RequestOptions.circleCropTransform())
                 .into(viewHolder.ivPost);
+        String profpicPath = "http://via.placeholder.com/300.png";
+        if (post.getUser().getParseFile("profilePicture") != null){
+            profpicPath = "something"; // Todo
+        }
+        Glide.with(context)
+                .load(profpicPath)
+                .apply(RequestOptions.circleCropTransform())
+                .into(viewHolder.ivProfileImage);
     }
 
     public static String getRelativeTimeAgo(String rawJsonDate) {

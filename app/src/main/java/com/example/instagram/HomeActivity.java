@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         postAdapter = new PostAdapter(posts);
         rvPosts = findViewById(R.id.rvPosts);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setReverseLayout(true);
+//        layoutManager.setReverseLayout(true);
         rvPosts.setLayoutManager(layoutManager);
         rvPosts.setAdapter(postAdapter);
         loadTopPosts();
@@ -72,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
                 loadNextDataFromApi(page);
             }
         };
+        rvPosts.addOnScrollListener(scrollListener);
     }
 
     private void createPost(String description, ParseFile imageFile, ParseUser user){
@@ -92,9 +93,9 @@ public class HomeActivity extends AppCompatActivity {
                 pb.setVisibility(ProgressBar.INVISIBLE);
             }
         });
-        posts.add(newPost);
-        postAdapter.notifyItemInserted(posts.size()-1);
-        rvPosts.scrollToPosition(posts.size()-1);
+        posts.add(0, newPost);
+        postAdapter.notifyItemInserted(0);
+        rvPosts.scrollToPosition(0);
     }
 
     public void onProfile(View v){
@@ -110,11 +111,11 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void done(List<Post> objects, ParseException e) {
                 if (e == null){
-                    for(int i = 0; i<objects.size(); ++i){
+                    for (int i = objects.size() - 1; i >= 0; i--){
                         posts.add(objects.get(i));
                         postAdapter.notifyItemInserted(posts.size() - 1);
                     }
-                    rvPosts.scrollToPosition(posts.size()-1);
+//                    rvPosts.scrollToPosition(0);
                 } else {
                     e.printStackTrace();
                 }
@@ -194,7 +195,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onHome(View v){
-        rvPosts.scrollToPosition(posts.size()-1);
+        rvPosts.scrollToPosition(0);
     }
 
     public void loadNextDataFromApi(int offset) {
