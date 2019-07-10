@@ -16,10 +16,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -28,6 +31,10 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView settings;
     private ImageView profile;
     private ParseUser user;
+    public final String APP_TAG = "Instagram";
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    public String photoFileName = "photo.jpg";
+    File photoFile;
     public static final int GET_FROM_GALLERY = 3;
 
     @Override
@@ -59,7 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
         TextView username = findViewById(R.id.username);
         username.setText(ParseUser.getCurrentUser().getUsername());
         if (user.getParseFile("profilePicture")!=null){
-            Glide.with(this).load(user.getParseFile("profilePicture").getUrl()).into(profile);
+            Glide.with(this).load(user.getParseFile("profilePicture").getUrl()).apply(RequestOptions.circleCropTransform()).into(profile);
         }
     }
 
@@ -71,7 +78,49 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void changeProfileImage(View v){
         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        photoFile = getPhotoFileUri(photoFileName);
+//
+//        Uri fileProvider = FileProvider.getUriForFile(ProfileActivity.this, "com.codepath.fileprovider", photoFile);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+//
+//        if (intent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+//        }
     }
+//
+//    public File getPhotoFileUri(String fileName) {
+//        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+//
+//        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+//            Log.d(APP_TAG, "failed to create directory");
+//        }
+//        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+//        return file;
+//    }
+//
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+//            if (resultCode == RESULT_OK) {
+//                File photoFile = getPhotoFileUri(photoFileName);
+//                final ParseFile parseFile = new ParseFile(photoFile);
+//                parseFile.saveInBackground(new SaveCallback() {
+//                    @Override
+//                    public void done(ParseException e) {
+//                        Log.d("[test]", "upload image callback");
+//                        ParseUser currentUser = ParseUser.getCurrentUser();
+//                        currentUser.put("profilePicture", parseFile);
+//                        currentUser.saveInBackground();
+//                        String newProfileUrl = ParseUser.getCurrentUser().getParseFile("profilePicture").getUrl();
+//                        Glide.with(ProfileActivity.this).load(newProfileUrl).apply(RequestOptions.circleCropTransform()).into(profile);
+//                    }
+//                });
+//            } else {
+//                Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -80,15 +129,24 @@ public class ProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             Uri selectedImage = data.getData();
+            System.out.println(selectedImage);
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] image = stream.toByteArray();
-                ParseFile parseFile = new ParseFile("profpic.jpg", image);
-                user.put("profilePicture", parseFile);
-                Glide.with(this).load(bitmap).apply(RequestOptions.circleCropTransform()).into(profile);
+                final ParseFile parseFile = new ParseFile("profpic.jpg", image);
+                final Bitmap finalBitmap = bitmap;
+                parseFile.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        user.put("profilePicture", parseFile);
+                        Glide.with(ProfileActivity.this).load(finalBitmap).apply(RequestOptions.circleCropTransform()).into(profile);
+                        user.saveInBackground();
+                    }
+                });
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

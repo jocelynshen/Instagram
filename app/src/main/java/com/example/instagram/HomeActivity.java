@@ -115,7 +115,6 @@ public class HomeActivity extends AppCompatActivity {
                         posts.add(objects.get(i));
                         postAdapter.notifyItemInserted(posts.size() - 1);
                     }
-//                    rvPosts.scrollToPosition(0);
                 } else {
                     e.printStackTrace();
                 }

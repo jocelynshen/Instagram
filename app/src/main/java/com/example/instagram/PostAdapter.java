@@ -88,14 +88,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                 .load(post.getImage().getUrl())
                 //.apply(RequestOptions.circleCropTransform())
                 .into(viewHolder.ivPost);
-        String profpicPath = "http://via.placeholder.com/300.png";
         if (post.getUser().getParseFile("profilePicture") != null){
-            profpicPath = "something"; // Todo
+            String profpicPath = post.getUser().getParseFile("profilePicture").getUrl();
+            Glide.with(context)
+                    .load(profpicPath)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(viewHolder.ivProfileImage);
+            viewHolder.ivProfileImage.setVisibility(View.VISIBLE);
         }
-        Glide.with(context)
-                .load(profpicPath)
-                .apply(RequestOptions.circleCropTransform())
-                .into(viewHolder.ivProfileImage);
+        else{
+            String profpicPath = "http://via.placeholder.com/300.png";
+            Glide.with(context)
+                    .load(profpicPath)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(viewHolder.ivProfileImage);
+        }
     }
 
     public static String getRelativeTimeAgo(String rawJsonDate) {
