@@ -71,6 +71,7 @@ public class HomeActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                System.out.println("load more");
                 loadNextDataFromApi(page);
             }
         };
@@ -199,7 +200,7 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
                 Bitmap bitmap = null;
-                final String caption = etCaption.getText().toString();
+
                 Uri selectedImage = data.getData();
                 try{
                     bitmap = MediaStore.Images.Media.getBitmap(HomeActivity.this.getContentResolver(), selectedImage);
@@ -217,6 +218,7 @@ public class HomeActivity extends AppCompatActivity {
                 sendPost.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        String caption = etCaption.getText().toString();
                         createPost(caption, parseFile, ParseUser.getCurrentUser());
                         dialog.dismiss();
                     }
