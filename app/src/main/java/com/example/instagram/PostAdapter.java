@@ -15,10 +15,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.instagram.model.Post;
+import com.parse.ParseUser;
 
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +40,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         public TextView caption;
         public TextView username;
         public TextView timePosted;
+        public ImageView ivHeart;
+        public TextView numLikes;
 
         public ViewHolder(View itemView)  {
             super(itemView);
@@ -46,6 +50,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             username = itemView.findViewById(R.id.userPosted);
             timePosted = itemView.findViewById(R.id.timePosted);
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
+            numLikes = itemView.findViewById(R.id.numLikes);
+            ivHeart = itemView.findViewById(R.id.heart);
             itemView.setOnClickListener(this);
         }
 
@@ -102,6 +108,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                     .load(profpicPath)
                     .apply(RequestOptions.circleCropTransform())
                     .into(viewHolder.ivProfileImage);
+        }
+        if (post.get("likes") != null) {
+            if (((ArrayList<String>) post.get("likes")).contains(ParseUser.getCurrentUser().getUsername() )) {
+                viewHolder.ivHeart.setImageResource(R.drawable.ic_heart_dark);
+            } else {
+                viewHolder.ivHeart.setImageResource(R.drawable.ic_heart);
+            }
+            String count = Integer.toString(((ArrayList<String>)post.get("likes")).size());
+            System.out.println(count);
+            viewHolder.numLikes.setText(count);
+        } else {
+            viewHolder.numLikes.setText("0");
         }
     }
 

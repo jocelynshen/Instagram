@@ -20,9 +20,11 @@ import java.util.Date;
 
 public class PostActivity extends AppCompatActivity {
     ImageView ivPost;
+    ImageView ivHeart;
     TextView caption;
     TextView username;
     TextView timePosted;
+    TextView numLikes;
     CommentAdapter commentAdapter;
     ArrayList<ArrayList<String>> comments;
     RecyclerView rvComments;
@@ -34,9 +36,11 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
         post = (Post) getIntent().getExtras().get("post");
         ivPost = findViewById(R.id.ivPost);
+        ivHeart = findViewById(R.id.heart);
         caption = findViewById(R.id.postCaption);
         username = findViewById(R.id.userPosted);
         timePosted = findViewById(R.id.timePosted);
+        numLikes = findViewById(R.id.numLikes);
         comments = new ArrayList<>();
         commentAdapter = new CommentAdapter(comments);
         rvComments = findViewById(R.id.rvComments);
@@ -58,6 +62,15 @@ public class PostActivity extends AppCompatActivity {
         }
         timePosted.setText(dateText);
         Glide.with(this).load(post.getImage().getUrl()).into(ivPost);
+        if (post.get("likes") != null) {
+            if (((ArrayList<String>) post.get("likes")).contains(ParseUser.getCurrentUser().getUsername() )) {
+                ivHeart.setImageResource(R.drawable.ic_heart_dark);
+            }
+            String count = Integer.toString(((ArrayList<String>)post.get("likes")).size());
+            numLikes.setText(count);
+        } else {
+            numLikes.setText("0");
+        }
         loadTopComments();
     }
 
@@ -67,10 +80,11 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void done(Post object, ParseException e) {
                 ArrayList<ArrayList<String>> refreshed_comments = (ArrayList<ArrayList<String>>) object.get("comments");
+                if (refreshed_comments != null){
                 for (ArrayList<String> comment : refreshed_comments){
                     comments.add(comment);
                     commentAdapter.notifyItemInserted(comments.size()-1);
-                }
+                }}
             }
         });
     }
@@ -101,5 +115,26 @@ public class PostActivity extends AppCompatActivity {
         comments.add(info);
         commentAdapter.notifyItemInserted(comments.size()-1);
         et.setText("");
+    }
+
+    public void like(View v){
+        if (post.get("likes") != null){
+                if (((ArrayList<String>) post.get("likes")).contains(ParseUser.getCurrentUser().getUsername())){
+                    ivHeart.setImageResource(R.drawable.ic_heart);
+                    ((ArrayList<String>) post.get("likes")).remove(ParseUser.getCurrentUser().getUsername());
+                    post.saveInBackground();
+                } else {
+                    ivHeart.setImageResource(R.drawable.ic_heart_dark);
+                    ArrayList<String> currentLikes = ((ArrayList<String>) post.get("likes"));
+                    currentLikes.add(ParseUser.getCurrentUser().getUsername());
+                    post.put("likes", currentLikes);
+                    post.saveInBackground();
+                }
+        } else {
+            ArrayList<String> newLikesArray = new ArrayList<String>();
+            newLikesArray.add(ParseUser.getCurrentUser().getUsername());
+            post.put("likes", newLikesArray);
+            post.saveInBackground();
+        }
     }
 }
