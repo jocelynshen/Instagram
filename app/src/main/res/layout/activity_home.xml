@@ -95,18 +95,19 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/bottomNav"
-        app:layout_constraintEnd_toStartOf="@+id/post"
+        app:layout_constraintEnd_toStartOf="@+id/postFromGallery"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/home"
         app:layout_constraintTop_toTopOf="@+id/bottomNav"
         app:srcCompat="@drawable/ic_search" />
 
     <ImageView
-        android:id="@+id/post"
+        android:id="@+id/postFromGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:onClick="postFromGallery"
         app:layout_constraintBottom_toBottomOf="@+id/bottomNav"
         app:layout_constraintEnd_toStartOf="@+id/updates"
         app:layout_constraintHorizontal_bias="0.5"
@@ -123,7 +124,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/bottomNav"
         app:layout_constraintEnd_toStartOf="@+id/profile"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/post"
+        app:layout_constraintStart_toEndOf="@+id/postFromGallery"
         app:layout_constraintTop_toTopOf="@+id/bottomNav"
         app:srcCompat="@drawable/ic_heart" />
 

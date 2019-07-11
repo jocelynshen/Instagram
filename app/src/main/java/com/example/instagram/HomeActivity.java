@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.instagram.model.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -27,6 +28,7 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ public class HomeActivity extends AppCompatActivity {
     RecyclerView rvPosts;
     private SwipeRefreshLayout swipeContainer; // handling swipe refresh
     private EndlessRecyclerViewScrollListener scrollListener;
+    public static final int GET_FROM_GALLERY = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +148,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(HomeActivity.this);
@@ -173,12 +176,52 @@ public class HomeActivity extends AppCompatActivity {
                         ParseUser user = ParseUser.getCurrentUser();
                         createPost(caption, parseFile, user);
                         dialog.dismiss();
-
                     }
                 });
                 dialog.show();
             } else {
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (requestCode == GET_FROM_GALLERY){
+            if (resultCode == RESULT_OK) {
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(HomeActivity.this);
+                final View mView = getLayoutInflater().inflate(R.layout.item_compose, null);
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                ImageView dismiss = mView.findViewById(R.id.dismiss);
+                ImageView sendPost = mView.findViewById(R.id.sendPost);
+                final EditText etCaption = mView.findViewById(R.id.etCaption);
+                dismiss.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                Bitmap bitmap = null;
+                final String caption = etCaption.getText().toString();
+                Uri selectedImage = data.getData();
+                try{
+                    bitmap = MediaStore.Images.Media.getBitmap(HomeActivity.this.getContentResolver(), selectedImage);
+                } catch (Exception e) {
+
+                }
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] image = stream.toByteArray();
+                final ParseFile parseFile = new ParseFile("profpic.jpg", image);
+                final Bitmap finalBitmap = bitmap;
+                ImageView ivPreview = mView.findViewById(R.id.ivPost);
+                Glide.with(HomeActivity.this).load(finalBitmap).into(ivPreview);
+
+                sendPost.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        createPost(caption, parseFile, ParseUser.getCurrentUser());
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
             }
         }
     }
@@ -199,4 +242,9 @@ public class HomeActivity extends AppCompatActivity {
     public void loadNextDataFromApi(int offset) {
         loadTopPosts();
     }
+
+    public void postFromGallery(View v){
+        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+    }
+
 }

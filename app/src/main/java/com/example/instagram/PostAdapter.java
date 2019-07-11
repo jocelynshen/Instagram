@@ -119,6 +119,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             System.out.println(count);
             viewHolder.numLikes.setText(count);
         } else {
+            viewHolder.ivHeart.setImageResource(R.drawable.ic_heart);
             viewHolder.numLikes.setText("0");
         }
     }

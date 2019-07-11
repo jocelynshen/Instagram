@@ -62,6 +62,11 @@ public class PostActivity extends AppCompatActivity {
         }
         timePosted.setText(dateText);
         Glide.with(this).load(post.getImage().getUrl()).into(ivPost);
+        loadLikes();
+        loadTopComments();
+    }
+
+    public void loadLikes(){
         if (post.get("likes") != null) {
             if (((ArrayList<String>) post.get("likes")).contains(ParseUser.getCurrentUser().getUsername() )) {
                 ivHeart.setImageResource(R.drawable.ic_heart_dark);
@@ -71,7 +76,6 @@ public class PostActivity extends AppCompatActivity {
         } else {
             numLikes.setText("0");
         }
-        loadTopComments();
     }
 
     private void loadTopComments(){
@@ -136,5 +140,6 @@ public class PostActivity extends AppCompatActivity {
             post.put("likes", newLikesArray);
             post.saveInBackground();
         }
+        loadLikes();
     }
 }
