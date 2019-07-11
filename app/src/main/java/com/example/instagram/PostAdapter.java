@@ -50,6 +50,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             username = itemView.findViewById(R.id.userPosted);
             timePosted = itemView.findViewById(R.id.timePosted);
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ParseUser u = mPosts.get(getAdapterPosition()).getUser();
+                    Intent i = new Intent(context, ExternalProfileActivity.class);
+                    i.putExtra("user", u);
+                    ((Activity) context).startActivityForResult(i, 25);
+                }
+            });
             numLikes = itemView.findViewById(R.id.numLikes);
             ivHeart = itemView.findViewById(R.id.heart);
             itemView.setOnClickListener(this);

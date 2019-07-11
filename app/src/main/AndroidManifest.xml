@@ -13,7 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".PostActivity"></activity>
+        <activity
+            android:name=".ExternalProfileActivity"
+            android:label="@string/title_activity_external_profile"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".PostActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".SignupActivity" />
         <activity

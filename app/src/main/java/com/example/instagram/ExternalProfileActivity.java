@@ -1,16 +1,11 @@
 package com.example.instagram;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,26 +16,16 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.instagram.model.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ExternalProfileActivity extends AppCompatActivity {
 
     private ImageView settings;
     private ImageView profile;
     private ParseUser user;
-    public final String APP_TAG = "Instagram";
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    public String photoFileName = "photo.jpg";
-    File photoFile;
     GridAdapter gridAdapter;
     ArrayList<Post> imageUrls;
     RecyclerView rvImages;
@@ -56,19 +41,19 @@ public class ProfileActivity extends AppCompatActivity {
         rvImages.setLayoutManager(new GridLayoutManager(this, 3));
         rvImages.setAdapter(gridAdapter);
 
-        user = ParseUser.getCurrentUser();
+        user = (ParseUser) getIntent().getExtras().get("user");
 
         settings = findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(ProfileActivity.this, settings);
+                PopupMenu popup = new PopupMenu(ExternalProfileActivity.this, settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         ParseUser.logOut();
-                        Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                        Intent intent = new Intent(ExternalProfileActivity.this, MainActivity.class);
                         startActivity(intent);
                         return true;
                     }
@@ -78,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
         profile = findViewById(R.id.ivProfileImage);
         TextView username = findViewById(R.id.username);
-        username.setText(ParseUser.getCurrentUser().getUsername());
+        username.setText(user.getUsername());
         if (user.getParseFile("profilePicture")!=null){
             Glide.with(this).load(user.getParseFile("profilePicture").getUrl()).apply(RequestOptions.circleCropTransform()).into(profile);
         }
@@ -89,43 +74,6 @@ public class ProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
-    }
-
-    public void changeProfileImage(View v){
-        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO: upload image to parse
-        Log.d("ActivityResult", "here");
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
-            Uri selectedImage = data.getData();
-            System.out.println(selectedImage);
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] image = stream.toByteArray();
-                final ParseFile parseFile = new ParseFile("profpic.jpg", image);
-                final Bitmap finalBitmap = bitmap;
-                parseFile.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        user.put("profilePicture", parseFile);
-                        Glide.with(ProfileActivity.this).load(finalBitmap).apply(RequestOptions.circleCropTransform()).into(profile);
-                        user.saveInBackground();
-                    }
-                });
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void loadTopPosts(){
